@@ -280,3 +280,16 @@ The launch is ready when:
 - Multiple studio branches and staff payroll.
 
 These can be considered after the core look-to-booking experience is established and client feedback shows a clear need.
+
+## 9. Technical decision record — PostgreSQL over MongoDB
+
+**Decision:** Use PostgreSQL as the primary database (running locally for development/testing).
+
+**Why:**
+- The domain is relational: clients, looks, consultations, quotes/versions/approvals, bookings, staff assignments, groups/members, payments/refunds, messages. These need joins, foreign keys, and uniqueness constraints (e.g. single-use consultation credit, one review per booking) that Postgres enforces at the database level.
+- Money integrity needs ACID transactions: deposit/partial/paid states, capped consultation credit applied once, shared group charges, and refunds must never double-apply or half-commit. Postgres transactions cover this; MongoDB would push that integrity into application code.
+- Agreement integrity needs versioning and audit: prior quotes/summaries retained across re-approvals, with an audit log of price/look changes. Relational tables plus migrations fit this better than flexible documents.
+- Access control is join-based: beauticians see only assigned bookings, organisers track group readiness without seeing member private notes, managers see all. Postgres handles these scoped queries and reporting aggregations (collected vs. service value, balances, popular services, repeat bookings) in SQL.
+- Scale profile favours Postgres: one studio, structured catalogue and bookings, not variable-shape documents at massive horizontal scale where MongoDB shines.
+
+MongoDB was rejected because its strengths (schema flexibility, horizontal document scale) do not match this project's needs, and it would leave financial and approval invariants to application code instead of the database.
