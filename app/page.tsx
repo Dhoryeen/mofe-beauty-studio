@@ -7,7 +7,10 @@ export default function Home() {
         studio, approve the plan, book and pay, then follow preparation through to completion.
       </p>
       <div className="flex flex-wrap gap-3">
-        <a href="/gallery" className="rounded-md bg-ink px-4 py-2 text-sm text-cream">
+        <a href="/demo" className="rounded-md bg-ink px-4 py-2 text-sm text-cream">
+          Try the booking demo
+        </a>
+        <a href="/gallery" className="rounded-md border border-ink/20 px-4 py-2 text-sm">
           Browse gallery
         </a>
         <a href="/design-system" className="rounded-md border border-ink/20 px-4 py-2 text-sm">
