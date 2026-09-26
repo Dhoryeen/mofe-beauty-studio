@@ -10,14 +10,22 @@ Source: `Docs/Mofe-Beauty-Studio-PRD.md` v1.0 (18 Sept 2026). Two user groups: *
 4. **Confirmation gating:** standard studio services = instant booking; bridal/complex/group/off-site = request → studio review → client accepts quote → deposit → confirmed.
 5. **Build order:** design tokens → app shell/auth/settings → gallery/looks → standard booking/payments → consult/quotes/trials → off-site/groups → progress/messages/changes/completion → admin dashboards → hardening.
 
-### Proposed stack (confirm before Phase 2)
+## Tech Stack & Environment
 
-- Web: TypeScript monolith (e.g. Next.js) with server routes + background job runner.
-- DB: Postgres with row-level ownership checks + audit log for price/look changes.
-- Storage: object storage for gallery/uploads/progress photos (private by default, signed URLs; public only with explicit consent).
-- Payments: provider abstraction behind a `payments` interface; enable the manager-selected methods for the operating market (PRD §5.6). Webhooks reconcile ledger; never trust client-side success alone.
-- Notifications: in-product + email mandatory; SMS optional provider; scheduled jobs for 48h/24h reminders and expiry alerts.
-- If the team prefers a different stack, keep the phase outputs and data contracts below unchanged.
+Chosen Tools:
+* Framework: Next.js 14.2.35 + React 18 + Tailwind + TypeScript
+* Database: PostgreSQL
+* Authentication: Better Auth
+* File Storage: Cloudflare R2
+* Payments: Paystack
+* Email: Resend
+
+Environment Configuration:
+* Application Status: Running locally.
+* Database Status: Running locally.
+* Deployment Note: Both the application server and the database are strictly configured to run in a local environment for development and testing. No cloud hosting or remote databases are active at this stage.
+
+Implications: Postgres with ownership checks + audit log; R2 private-by-default with signed URLs (public only on explicit consent); Paystack behind a `payments` interface with webhook reconciliation (never trust client-side success); Resend for product + email notifications with scheduled 48h/24h reminder jobs; Better Auth with `client / manager / beautician_consultant` guards.
 
 ### Repo shape (proposed)
 
