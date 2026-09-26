@@ -293,3 +293,9 @@ These can be considered after the core look-to-booking experience is established
 - Scale profile favours Postgres: one studio, structured catalogue and bookings, not variable-shape documents at massive horizontal scale where MongoDB shines.
 
 MongoDB was rejected because its strengths (schema flexibility, horizontal document scale) do not match this project's needs, and it would leave financial and approval invariants to application code instead of the database.
+
+## Design Refinement Notes
+
+Requested Improvements:
+* Specific Change: Requested a button styling refinement to add rounded corners and a subtle drop shadow, alongside increasing text contrast for better accessibility.
+* Verification: Confirmed that the updated `design.html` file accurately reflects these visual contrast and button modifications.
