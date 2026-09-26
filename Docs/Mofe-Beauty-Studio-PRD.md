@@ -299,3 +299,12 @@ MongoDB was rejected because its strengths (schema flexibility, horizontal docum
 Requested Improvements:
 * Specific Change: Requested a button styling refinement to add rounded corners and a subtle drop shadow, alongside increasing text contrast for better accessibility.
 * Verification: Confirmed that the updated `design.html` file accurately reflects these visual contrast and button modifications.
+
+## Current Progress & Roadmap
+
+Current Status:
+* Phase Reached: Phase 1 - Functional Local Prototype Complete. The initial single working page runs successfully on a local server using mock data.
+
+Next Steps in Roadmap:
+1. Integrate a local database (PostgreSQL) to replace mock data streams.
+2. Build out user authentication routes (Sign-in/Sign-up flows).
