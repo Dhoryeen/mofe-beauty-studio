@@ -38,7 +38,23 @@ Consultations are required for bridal/complex looks, optional otherwise. Paid co
 ## Repo contents
 
 - `Docs/Mofe-Beauty-Studio-PRD.md` — full product requirements (v1.0, 18 Sept 2026).
+- `Docs/Implementation-Plan.md` — phased build plan.
+- `design.html` — standalone brand/UI preview.
+- `app/demo` — clickable mock booking flow (no login/DB).
 - `README.md` — this overview.
+
+## Local development (Phase 2)
+
+Requires PostgreSQL 18 binaries on PATH as `C:\Program Files\PostgreSQL\18\bin`
+(the app uses its own loopback-only cluster, not the system service).
+
+- `npm install`
+- `npm run db:start` — start the local cluster (data in `%LOCALAPPDATA%\mofe-pgdata`, port 5433).
+- Copy `.env.example` to `.env.local` and fill in values.
+- `npm run db:setup` — generate + apply migrations + seed settings, services, dev manager.
+- `npm run dev` — open http://localhost:3000. Sign up as a client, or sign in as the
+  seeded manager to view `/admin/settings`. `/services` reads live from PostgreSQL.
+- `npm run db:stop` — stop the local cluster.
 
 ## Out of scope for launch
 

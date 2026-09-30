@@ -1,12 +1,17 @@
 import "./globals.css";
 import type { ReactNode } from "react";
+import { getSession } from "@/lib/session";
+import { SignOutButton } from "@/components/SignOutButton";
 
 export const metadata = {
   title: "Mofe Beauty Studio",
   description: "Design a look, approve the plan, book and follow through."
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const session = await getSession();
+  const role = (session?.user as { role?: string } | undefined)?.role;
+
   return (
     <html lang="en">
       <body>
@@ -15,10 +20,24 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <a href="/" className="font-semibold tracking-tight">
               Mofe Beauty Studio
             </a>
-            <nav className="flex gap-4 text-sm">
+            <nav className="flex items-center gap-4 text-sm">
               <a href="/gallery">Gallery</a>
               <a href="/services">Services</a>
-              <a href="/design-system">Design system</a>
+              <a href="/demo">Demo</a>
+              {role === "manager" && <a href="/admin/settings">Settings</a>}
+              {session?.user ? (
+                <>
+                  <span className="text-muted">
+                    {session.user.email} · {role ?? "client"}
+                  </span>
+                  <SignOutButton />
+                </>
+              ) : (
+                <>
+                  <a href="/sign-in">Sign in</a>
+                  <a href="/sign-up">Sign up</a>
+                </>
+              )}
             </nav>
           </div>
         </header>
