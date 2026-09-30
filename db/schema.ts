@@ -68,10 +68,56 @@ export const services = pgTable("services", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   duration: text("duration").notNull(),
+  description: text("description").notNull().default(""),
   priceNaira: integer("price_naira").notNull(),
   priceType: text("price_type").notNull().default("fixed"),
   category: text("category").notNull().default("makeup"),
   availableAt: text("available_at").notNull().default("studio"),
   consultRequired: boolean("consult_required").notNull().default(false),
+  extras: text("extras").array().notNull().default([]),
   active: boolean("active").notNull().default(true)
+});
+
+// Inspiration gallery (PRD §5.1). imageUrl null => styled placeholder card.
+export const galleryItems = pgTable("gallery_items", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  service: text("service").notNull().default("makeup"),
+  occasion: text("occasion").notNull().default("everyday"),
+  finish: text("finish"),
+  hairLength: text("hair_length"),
+  imageUrl: text("image_url"),
+  active: boolean("active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0)
+});
+
+// Client inspiration boards (PRD §5.2). Drafts stay drafts; booking snapshots come later.
+export const looks = pgTable("looks", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  occasion: text("occasion").notNull().default("everyday"),
+  makeupPreferences: text("makeup_preferences").notNull().default(""),
+  hairstyle: text("hairstyle").notNull().default(""),
+  hairLengthTexture: text("hair_length_texture").notNull().default(""),
+  finish: text("finish").notNull().default(""),
+  avoidDetails: text("avoid_details").notNull().default(""),
+  sensitivities: text("sensitivities").notNull().default(""),
+  productPreferences: text("product_preferences").notNull().default(""),
+  status: text("status").notNull().default("draft"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const lookImages = pgTable("look_images", {
+  id: text("id").primaryKey(),
+  lookId: text("look_id")
+    .notNull()
+    .references(() => looks.id, { onDelete: "cascade" }),
+  url: text("url").notNull(),
+  source: text("source").notNull().default("upload"),
+  galleryItemId: text("gallery_item_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
 });

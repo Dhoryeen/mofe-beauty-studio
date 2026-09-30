@@ -31,11 +31,12 @@ export default async function ServicesPage() {
             key={s.id}
             name={s.name}
             duration={s.duration}
-            price={`${naira(s.priceNaira)}${s.priceType === "starting" ? " (starting)" : ""}`}
+            price={naira(s.priceNaira)}
             starting={s.priceType === "starting"}
             extras={[
               `Available: ${s.availableAt}`,
-              s.consultRequired ? "Consultation required" : "Consultation optional"
+              s.consultRequired ? "Consultation required" : "Consultation optional",
+              ...s.extras
             ]}
           />
         ))}

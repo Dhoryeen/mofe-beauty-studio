@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../lib/db";
 import { auth } from "../lib/auth";
-import { services, settings, user } from "./schema";
+import { galleryItems, services, settings, user } from "./schema";
 
 // PRD §6 recommended defaults.
 const DEFAULT_SETTINGS: Array<[string, string]> = [
@@ -24,31 +24,37 @@ const SEED_SERVICES = [
     id: "svc-makeup",
     name: "Signature makeup",
     duration: "90 mins · studio",
+    description: "Skin-first makeup tailored to your finish, from natural to full glam.",
     priceNaira: 45000,
     priceType: "fixed",
     category: "makeup",
     availableAt: "studio",
-    consultRequired: false
+    consultRequired: false,
+    extras: ["Touch-up kit", "Lashes"]
   },
   {
     id: "svc-hair",
     name: "Silk press + curls",
     duration: "2 hrs · studio",
+    description: "Smooth silk press finished with soft curls for any occasion.",
     priceNaira: 25000,
     priceType: "fixed",
     category: "hair",
     availableAt: "studio",
-    consultRequired: false
+    consultRequired: false,
+    extras: ["Deep conditioning treatment"]
   },
   {
     id: "svc-bridal",
     name: "Bridal full look",
     duration: "3–4 hrs · studio or off-site",
+    description: "Complete bridal makeup and hairstyling with trial option and day-of touch-ups.",
     priceNaira: 120000,
     priceType: "starting",
     category: "combined",
     availableAt: "both",
-    consultRequired: true
+    consultRequired: true,
+    extras: ["Trial appointment (separate fee)", "Touch-up kit", "Travel fee where applicable"]
   }
 ];
 
@@ -73,9 +79,28 @@ async function main() {
           category: s.category,
           availableAt: s.availableAt,
           consultRequired: s.consultRequired,
+          description: s.description,
+          extras: s.extras,
           active: true
         }
       });
+  }
+
+  const SEED_GALLERY = [
+    { id: "gal-01", title: "Soft bridal glam", service: "makeup", occasion: "bridal", finish: "soft-glam", hairLength: null, sortOrder: 1 },
+    { id: "gal-02", title: "Classic bridal updo", service: "hair", occasion: "bridal", finish: null, hairLength: "long", sortOrder: 2 },
+    { id: "gal-03", title: "Bridal full look", service: "combined", occasion: "bridal", finish: "full-glam", hairLength: "long", sortOrder: 3 },
+    { id: "gal-04", title: "Birthday silk press", service: "hair", occasion: "birthday", finish: null, hairLength: "medium", sortOrder: 4 },
+    { id: "gal-05", title: "Birthday soft glam", service: "makeup", occasion: "birthday", finish: "soft-glam", hairLength: null, sortOrder: 5 },
+    { id: "gal-06", title: "Everyday polish", service: "makeup", occasion: "everyday", finish: "natural", hairLength: null, sortOrder: 6 },
+    { id: "gal-07", title: "Everyday silk press", service: "hair", occasion: "everyday", finish: null, hairLength: "short", sortOrder: 7 },
+    { id: "gal-08", title: "Matte party look", service: "combined", occasion: "other", finish: "matte", hairLength: "extensions", sortOrder: 8 }
+  ];
+  for (const g of SEED_GALLERY) {
+    await db
+      .insert(galleryItems)
+      .values({ ...g, imageUrl: null, active: true })
+      .onConflictDoNothing({ target: galleryItems.id });
   }
 
   const email = process.env.MANAGER_EMAIL ?? "manager@mofe.local";

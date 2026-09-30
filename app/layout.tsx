@@ -24,6 +24,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <a href="/gallery">Gallery</a>
               <a href="/services">Services</a>
               <a href="/demo">Demo</a>
+              {session?.user && <a href="/looks">Looks</a>}
               {role === "manager" && <a href="/admin/settings">Settings</a>}
               {session?.user ? (
                 <>
