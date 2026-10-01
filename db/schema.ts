@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, text, timestamp, date } from "drizzle-orm/pg-core";
 
 // --- Better Auth tables (better-auth/adapters/drizzle, provider "pg") ---
 
@@ -75,6 +75,7 @@ export const services = pgTable("services", {
   availableAt: text("available_at").notNull().default("studio"),
   consultRequired: boolean("consult_required").notNull().default(false),
   extras: text("extras").array().notNull().default([]),
+  durationMin: integer("duration_min").notNull().default(60),
   active: boolean("active").notNull().default(true)
 });
 
@@ -119,5 +120,108 @@ export const lookImages = pgTable("look_images", {
   url: text("url").notNull(),
   source: text("source").notNull().default("upload"),
   galleryItemId: text("gallery_item_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// --- Phase 4: booking + payments ---
+
+// Public portfolio for users with the beautician_consultant role.
+export const staffProfiles = pgTable("staff_profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  displayName: text("display_name").notNull(),
+  craft: text("craft").notNull().default("makeup"),
+  bio: text("bio").notNull().default(""),
+  active: boolean("active").notNull().default(true)
+});
+
+// Weekly working hours, minutes from midnight. weekday 0=Sunday.
+export const availabilityRules = pgTable("availability_rules", {
+  id: text("id").primaryKey(),
+  staffId: text("staff_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  weekday: integer("weekday").notNull(),
+  startMin: integer("start_min").notNull(),
+  endMin: integer("end_min").notNull()
+});
+
+// Full- or partial-day blocks (leave, etc.).
+export const availabilityExceptions = pgTable("availability_exceptions", {
+  id: text("id").primaryKey(),
+  staffId: text("staff_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  day: date("day").notNull(),
+  startMin: integer("start_min"),
+  endMin: integer("end_min"),
+  reason: text("reason").notNull().default("")
+});
+
+export const bookings = pgTable("bookings", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  serviceId: text("service_id")
+    .notNull()
+    .references(() => services.id),
+  lookId: text("look_id"),
+  // pending_payment | confirmed | reschedule_pending | completed | cancelled
+  status: text("status").notNull().default("pending_payment"),
+  slotStart: timestamp("slot_start", { withTimezone: true }).notNull(),
+  slotEnd: timestamp("slot_end", { withTimezone: true }).notNull(),
+  readinessDeadline: timestamp("readiness_deadline", { withTimezone: true }),
+  preferredTime: text("preferred_time"),
+  totalNaira: integer("total_naira").notNull(),
+  depositNaira: integer("deposit_naira").notNull(),
+  paidNaira: integer("paid_naira").notNull().default(0),
+  // unpaid | partial | paid | refund_pending | refunded
+  paymentStatus: text("payment_status").notNull().default("unpaid"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const bookingStaff = pgTable("booking_staff", {
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  staffId: text("staff_id")
+    .notNull()
+    .references(() => user.id),
+  kind: text("kind").notNull().default("primary")
+});
+
+export const payments = pgTable("payments", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  provider: text("provider").notNull().default("mock"),
+  reference: text("reference").notNull().unique(),
+  amountNaira: integer("amount_naira").notNull(),
+  kind: text("kind").notNull().default("deposit"),
+  // pending | success | failed | refunded
+  status: text("status").notNull().default("pending"),
+  raw: jsonb("raw"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const waitlist = pgTable("waitlist", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  serviceId: text("service_id")
+    .notNull()
+    .references(() => services.id),
+  dateFrom: date("date_from"),
+  dateTo: date("date_to"),
+  timeRange: text("time_range"),
+  note: text("note").notNull().default(""),
+  // open | notified | closed
+  status: text("status").notNull().default("open"),
   createdAt: timestamp("created_at").notNull().defaultNow()
 });

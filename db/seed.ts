@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../lib/db";
 import { auth } from "../lib/auth";
-import { galleryItems, services, settings, user } from "./schema";
+import { availabilityRules, galleryItems, services, settings, staffProfiles, user } from "./schema";
 
 // PRD §6 recommended defaults.
 const DEFAULT_SETTINGS: Array<[string, string]> = [
@@ -24,6 +24,7 @@ const SEED_SERVICES = [
     id: "svc-makeup",
     name: "Signature makeup",
     duration: "90 mins · studio",
+    durationMin: 90,
     description: "Skin-first makeup tailored to your finish, from natural to full glam.",
     priceNaira: 45000,
     priceType: "fixed",
@@ -36,6 +37,7 @@ const SEED_SERVICES = [
     id: "svc-hair",
     name: "Silk press + curls",
     duration: "2 hrs · studio",
+    durationMin: 120,
     description: "Smooth silk press finished with soft curls for any occasion.",
     priceNaira: 25000,
     priceType: "fixed",
@@ -48,6 +50,7 @@ const SEED_SERVICES = [
     id: "svc-bridal",
     name: "Bridal full look",
     duration: "3–4 hrs · studio or off-site",
+    durationMin: 210,
     description: "Complete bridal makeup and hairstyling with trial option and day-of touch-ups.",
     priceNaira: 120000,
     priceType: "starting",
@@ -80,6 +83,7 @@ async function main() {
           availableAt: s.availableAt,
           consultRequired: s.consultRequired,
           description: s.description,
+          durationMin: s.durationMin,
           extras: s.extras,
           active: true
         }
@@ -117,6 +121,38 @@ async function main() {
     console.log(`manager ensured: ${email} (dev only)`);
   }
   console.log("seed complete");
+
+  // --- Specialists (limited admins) with Mon–Sat 9:00–18:00 availability ---
+  const staffPassword = process.env.STAFF_PASSWORD ?? "mofe-staff-dev-only";
+  const STAFF = [
+    { name: "Adaeze", email: "adaeze@mofe.local", craft: "makeup", bio: "Signature makeup, soft glam to full bridal." },
+    { name: "Funmi", email: "funmi@mofe.local", craft: "hair", bio: "Silk press, curls and occasion styling." }
+  ];
+  for (const s of STAFF) {
+    const rows = await db.select().from(user).where(eq(user.email, s.email));
+    let id: string | undefined = rows[0]?.id;
+    if (!id) {
+      const res = await auth.api.signUpEmail({ body: { name: s.name, email: s.email, password: staffPassword } });
+      id = (res as { user?: { id?: string } })?.user?.id;
+      if (!id) throw new Error(`staff sign-up failed for ${s.email}`);
+    }
+    await db.update(user).set({ role: "beautician_consultant" }).where(eq(user.id, id));
+    await db
+      .insert(staffProfiles)
+      .values({ userId: id, displayName: `${s.name} · ${s.craft}`, craft: s.craft, bio: s.bio, active: true })
+      .onConflictDoUpdate({
+        target: staffProfiles.userId,
+        set: { displayName: `${s.name} · ${s.craft}`, craft: s.craft, bio: s.bio, active: true }
+      });
+    for (let weekday = 1; weekday <= 6; weekday++) {
+      await db
+        .insert(availabilityRules)
+        .values({ id: `${id}-${weekday}`, staffId: id, weekday, startMin: 540, endMin: 1080 })
+        .onConflictDoNothing();
+    }
+    console.log(`specialist ensured: ${s.email} (dev only)`);
+  }
+  console.log("staff seed complete");
   process.exit(0);
 }
 
