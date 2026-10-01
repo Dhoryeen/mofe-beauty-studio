@@ -177,6 +177,8 @@ export const bookings = pgTable("bookings", {
   totalNaira: integer("total_naira").notNull(),
   depositNaira: integer("deposit_naira").notNull(),
   paidNaira: integer("paid_naira").notNull().default(0),
+  // Consultation credit applied to this booking (separate from cash paid).
+  creditNaira: integer("credit_naira").notNull().default(0),
   // unpaid | partial | paid | refund_pending | refunded
   paymentStatus: text("payment_status").notNull().default("unpaid"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -195,9 +197,9 @@ export const bookingStaff = pgTable("booking_staff", {
 
 export const payments = pgTable("payments", {
   id: text("id").primaryKey(),
-  bookingId: text("booking_id")
-    .notNull()
-    .references(() => bookings.id, { onDelete: "cascade" }),
+  bookingId: text("booking_id").references(() => bookings.id, { onDelete: "cascade" }),
+  consultationId: text("consultation_id"),
+  trialId: text("trial_id"),
   provider: text("provider").notNull().default("mock"),
   reference: text("reference").notNull().unique(),
   amountNaira: integer("amount_naira").notNull(),
@@ -224,4 +226,114 @@ export const waitlist = pgTable("waitlist", {
   // open | notified | closed
   status: text("status").notNull().default("open"),
   createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// --- Phase 5: consultations, quotes/approvals, trials ---
+
+export const consultations = pgTable("consultations", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  lookId: text("look_id"),
+  serviceId: text("service_id")
+    .notNull()
+    .references(() => services.id),
+  staffId: text("staff_id").references(() => user.id),
+  // in_person | video
+  mode: text("mode").notNull().default("in_person"),
+  slotStart: timestamp("slot_start", { withTimezone: true }),
+  slotEnd: timestamp("slot_end", { withTimezone: true }),
+  feeNaira: integer("fee_naira").notNull(),
+  // pending_payment | booked | completed | cancelled
+  status: text("status").notNull().default("pending_payment"),
+  recommendations: text("recommendations").notNull().default(""),
+  openQuestions: text("open_questions").notNull().default(""),
+  nextSteps: text("next_steps").notNull().default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// Single-use credit issued when a paid consultation completes.
+export const consultationCredits = pgTable("consultation_credits", {
+  id: text("id").primaryKey(),
+  consultationId: text("consultation_id").notNull().unique(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  serviceId: text("service_id")
+    .notNull()
+    .references(() => services.id),
+  lookId: text("look_id"),
+  amountNaira: integer("amount_naira").notNull(),
+  // issued | applied | void
+  status: text("status").notNull().default("issued"),
+  appliedBookingId: text("applied_booking_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Look summary + personalised quote. New versions supersede old ones; history retained.
+export const quotes = pgTable("quotes", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  lookId: text("look_id"),
+  serviceId: text("service_id")
+    .notNull()
+    .references(() => services.id),
+  bookingId: text("booking_id"),
+  version: integer("version").notNull().default(1),
+  supersedesId: text("supersedes_id"),
+  // draft | awaiting_approval | approved | rejected | expired | superseded
+  status: text("status").notNull().default("draft"),
+  makeup: text("makeup").notNull().default(""),
+  hairstyle: text("hairstyle").notNull().default(""),
+  referencePhotos: text("reference_photos").array().notNull().default([]),
+  extras: text("extras").array().notNull().default([]),
+  prepRequirements: text("prep_requirements").notNull().default(""),
+  serviceNaira: integer("service_naira").notNull(),
+  travelNaira: integer("travel_naira").notNull().default(0),
+  creditNaira: integer("credit_naira").notNull().default(0),
+  depositNaira: integer("deposit_naira").notNull(),
+  totalNaira: integer("total_naira").notNull(),
+  validUntil: timestamp("valid_until", { withTimezone: true }),
+  note: text("note").notNull().default(""),
+  createdBy: text("created_by").references(() => user.id),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+export const quoteApprovals = pgTable("quote_approvals", {
+  id: text("id").primaryKey(),
+  quoteId: text("quote_id")
+    .notNull()
+    .references(() => quotes.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  decision: text("decision").notNull(),
+  note: text("note").notNull().default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+export const trials = pgTable("trials", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  quoteId: text("quote_id")
+    .notNull()
+    .references(() => quotes.id, { onDelete: "cascade" }),
+  serviceId: text("service_id")
+    .notNull()
+    .references(() => services.id),
+  staffId: text("staff_id").references(() => user.id),
+  slotStart: timestamp("slot_start", { withTimezone: true }).notNull(),
+  slotEnd: timestamp("slot_end", { withTimezone: true }).notNull(),
+  feeNaira: integer("fee_naira").notNull(),
+  // pending_payment | booked | completed | cancelled
+  status: text("status").notNull().default("pending_payment"),
+  feedback: text("feedback").notNull().default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
 });

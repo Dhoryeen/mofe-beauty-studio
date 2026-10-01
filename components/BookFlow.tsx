@@ -59,7 +59,17 @@ export function BookFlow({ services, staff }: { services: Service[]; staff: Staf
 
   const slot = slotIdx != null ? slots[slotIdx] : null;
   const deposit = service ? Math.round(service.priceNaira * 0.3) : 0;
-  const dueNow = payMode === "deposit" ? deposit : (service?.priceNaira ?? 0);
+  const [credit, setCredit] = useState(0);
+
+  useEffect(() => {
+    if (!serviceId) return;
+    fetch(`/api/credits?serviceId=${serviceId}`)
+      .then((r) => r.json())
+      .then((d) => setCredit(Math.min(d.amountNaira ?? 0, service?.priceNaira ?? 0)))
+      .catch(() => setCredit(0));
+  }, [serviceId, service?.priceNaira]);
+
+  const dueNow = Math.max((payMode === "deposit" ? deposit : (service?.priceNaira ?? 0)) - credit, 0);
 
   async function book() {
     setError(null);
@@ -199,8 +209,9 @@ export function BookFlow({ services, staff }: { services: Service[]; staff: Staf
         <QuoteTable
           lines={[
             { label: `Service — ${service.name}`, amount: naira(service.priceNaira) },
-            { label: payMode === "deposit" ? "Deposit due now (30%)" : "Full payment due now", amount: naira(dueNow) },
-            { label: "Balance due on appointment day", amount: naira(service.priceNaira - dueNow) }
+            ...(credit > 0 ? [{ label: "Consultation credit", amount: `−${naira(credit)}` }] : []),
+            { label: payMode === "deposit" ? "Deposit due now (30%, credit first)" : "Full payment due now (less credit)", amount: naira(dueNow) },
+            { label: "Balance due on appointment day", amount: naira(service.priceNaira - credit - Math.min(dueNow, service.priceNaira - credit)) }
           ]}
           total={naira(service.priceNaira)}
         />

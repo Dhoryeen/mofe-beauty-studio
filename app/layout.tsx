@@ -26,7 +26,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
               <a href="/demo">Demo</a>
               {session?.user && <a href="/book">Book</a>}
               {session?.user && <a href="/bookings">My bookings</a>}
+              {session?.user && <a href="/consultations">Consultations</a>}
+              {session?.user && <a href="/quotes">Quotes</a>}
               {session?.user && <a href="/looks">Looks</a>}
+              {role === "manager" && <a href="/admin/quotes">Quotes admin</a>}
+              {role === "beautician_consultant" && <a href="/admin/quotes">Propose quotes</a>}
               {role === "manager" && <a href="/admin/waitlist">Waitlist</a>}
               {role === "manager" && <a href="/admin/settings">Settings</a>}
               {role === "manager" && <a href="/admin/gallery">Gallery admin</a>}

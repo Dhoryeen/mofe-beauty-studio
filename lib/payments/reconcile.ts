@@ -7,6 +7,7 @@ export async function applyPaymentSuccess(paymentId: string) {
   const rows = await db.select().from(payments).where(eq(payments.id, paymentId));
   const payment = rows[0];
   if (!payment || payment.status === "success") return payment ?? null;
+  if (!payment.bookingId) return payment;
 
   const now = new Date();
   await db.update(payments).set({ status: "success", updatedAt: now }).where(eq(payments.id, paymentId));

@@ -15,7 +15,14 @@ const DEFAULT_SETTINGS: Array<[string, string]> = [
   ["group_confirmation", "all_required_deposits_paid"],
   ["review_per_booking", "1"],
   ["review_publication", "consent_required"],
-  ["photo_public_use_default", "unselected"]
+  ["photo_public_use_default", "unselected"],
+  ["consultation_fee", "10000"],
+  ["consultation_duration_min", "30"],
+  ["trial_fee", "15000"],
+  [
+    "complex_look_guidance",
+    "A look counts as complex when it involves bridal parties of 3+, full-day bookings, avant-garde or editorial styling, off-site setups, or techniques needing extra preparation. Bridal and complex looks always require a paid consultation before booking."
+  ]
 ];
 
 // Mirrors lib/mock.ts so the catalogue page can read live data.

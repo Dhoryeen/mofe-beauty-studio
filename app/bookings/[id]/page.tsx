@@ -32,7 +32,7 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
   );
   const pays = await db.select().from(payments).where(eq(payments.bookingId, b.id));
 
-  const owed = b.totalNaira - b.paidNaira;
+  const owed = b.totalNaira - b.creditNaira - b.paidNaira;
   const canPay = owed > 0 && ["pending_payment", "confirmed"].includes(b.status);
 
   return (
@@ -51,6 +51,7 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
       <QuoteTable
         lines={[
           { label: "Service total", amount: naira(b.totalNaira) },
+          ...(b.creditNaira > 0 ? [{ label: "Consultation credit", amount: `−${naira(b.creditNaira)}` }] : []),
           { label: "Paid so far", amount: naira(b.paidNaira) },
           { label: "Balance due on appointment day", amount: naira(owed) }
         ]}

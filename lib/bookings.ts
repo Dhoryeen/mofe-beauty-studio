@@ -1,10 +1,11 @@
 import { randomUUID } from "crypto";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import { bookingStaff, bookings, looks, payments, services } from "../db/schema";
+import { bookingStaff, bookings, consultationCredits, looks, payments, services } from "../db/schema";
 import { staffForService, staffFree } from "./slots";
 import { applyPaymentSuccess, markPaymentFailed } from "./payments/reconcile";
 import { initializePayment, providerName } from "./payments";
+import { findCredit } from "./consultations";
 
 export async function createBooking(opts: {
   userId: string;
@@ -59,13 +60,21 @@ export async function createBooking(opts: {
 
   const total = svc.priceNaira;
   const deposit = Math.round(total * 0.3);
-  const amount = opts.payMode === "deposit" ? deposit : total;
+
+  // Consultation credit applies first, capped at the service total (PRD §5.3).
+  const found = await findCredit(opts.userId, svc.id, opts.lookId);
+  const credit = found ? Math.min(found.amountNaira, total) : 0;
+
+  const amount = opts.payMode === "deposit" ? Math.max(deposit - credit, 0) : total - credit;
 
   const bookingId = randomUUID();
   const paymentId = randomUUID();
   const now = new Date();
 
-  const init = await initializePayment({ email: opts.email, amountNaira: amount, simulate: opts.simulate });
+  const init =
+    amount > 0
+      ? await initializePayment({ email: opts.email, amountNaira: amount, simulate: opts.simulate })
+      : { reference: `mock_${randomUUID().replace(/-/g, "")}`, authorizationUrl: null as string | null, immediate: "success" as const };
 
   await db.transaction(async (tx) => {
     await tx.insert(bookings).values({
@@ -81,6 +90,7 @@ export async function createBooking(opts: {
       totalNaira: total,
       depositNaira: deposit,
       paidNaira: 0,
+      creditNaira: credit,
       paymentStatus: "unpaid",
       createdAt: now,
       updatedAt: now
@@ -95,6 +105,8 @@ export async function createBooking(opts: {
     await tx.insert(payments).values({
       id: paymentId,
       bookingId,
+      consultationId: null,
+      trialId: null,
       provider: providerName(),
       reference: init.reference,
       amountNaira: amount,
@@ -104,6 +116,12 @@ export async function createBooking(opts: {
       createdAt: now,
       updatedAt: now
     });
+    if (found) {
+      await tx
+        .update(consultationCredits)
+        .set({ status: "applied", appliedBookingId: bookingId })
+        .where(eq(consultationCredits.id, found.id));
+    }
   });
 
   // Mock settles instantly; Paystack stays pending until callback/webhook.
@@ -125,12 +143,10 @@ export async function payTowards(opts: {
   if (!booking || booking.userId !== opts.userId) {
     throw Object.assign(new Error("Booking not found"), { status: 404 });
   }
-  const remaining = booking.totalNaira - booking.paidNaira;
+  const remaining = booking.totalNaira - booking.creditNaira - booking.paidNaira;
   if (remaining <= 0) throw Object.assign(new Error("Nothing owed"), { status: 400 });
-  const amount =
-    opts.kind === "due"
-      ? Math.min(Math.max(booking.depositNaira - booking.paidNaira, 0) || remaining, remaining)
-      : remaining;
+  const depositCashOwed = Math.max(booking.depositNaira - booking.creditNaira - booking.paidNaira, 0);
+  const amount = opts.kind === "due" ? depositCashOwed > 0 ? depositCashOwed : remaining : remaining;
 
   const paymentId = randomUUID();
   const now = new Date();
