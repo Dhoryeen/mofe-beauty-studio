@@ -1,12 +1,13 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/session";
-import { bookingStaff, bookings, payments, services, user } from "@/db/schema";
+import { bookingStaff, bookings, payments, quotes, services, user } from "@/db/schema";
 import { QuoteTable } from "@/components/design-system/QuoteTable";
 import { PaymentStatus } from "@/components/design-system/PaymentStatus";
 import { MilestoneTracker } from "@/components/design-system/MilestoneTracker";
 import { BookingActions } from "@/components/BookingActions";
+import { holdExpired } from "@/lib/requests";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,12 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
 
   const owed = b.totalNaira - b.creditNaira - b.paidNaira;
   const canPay = owed > 0 && ["pending_payment", "confirmed"].includes(b.status);
+  const expired = holdExpired(b);
+  const linkedQuotes = await db
+    .select()
+    .from(quotes)
+    .where(eq(quotes.bookingId, b.id))
+    .orderBy(desc(quotes.version));
 
   return (
     <div className="grid gap-5">
@@ -44,6 +51,13 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
       <div className="rounded-lg bg-card p-4 text-sm shadow-card">
         <p><strong>{new Date(b.slotStart).toLocaleString()}</strong> — {staff.map((s) => s.name).join(" + ")}</p>
         <p className="text-muted">Status: {b.status}</p>
+        {b.location && <p className="text-muted">Location: {b.location}</p>}
+        {b.status === "request" && (
+          <p className="text-muted">
+            Request received — this date is not secured.{" "}
+            {b.holdUntil ? (expired ? "The temporary hold has expired; the studio must review it before payment." : `Temporary hold until ${new Date(b.holdUntil).toLocaleString()}.`) : ""}
+          </p>
+        )}
         {b.status === "pending_payment" && (
           <p className="text-danger">Not confirmed yet — no confirmed booking exists until a payment succeeds.</p>
         )}
@@ -66,7 +80,17 @@ export default async function BookingDetailPage({ params }: { params: { id: stri
           </p>
         ))}
       </div>
-      <MilestoneTracker current={b.status === "confirmed" ? 4 : 2} />
+      <MilestoneTracker current={b.status === "confirmed" ? 4 : b.status === "request" ? 0 : 2} />
+      {linkedQuotes.length > 0 && (
+        <div className="grid gap-1 text-sm">
+          <h2 className="font-semibold">Studio quotes for this request</h2>
+          {linkedQuotes.map((q) => (
+            <p key={q.id}>
+              <a href={`/quotes/${q.id}`} className="underline">v{q.version}</a> · {q.status} · {naira(q.totalNaira)}
+            </p>
+          ))}
+        </div>
+      )}
       {b.userId === session.user.id && <BookingActions id={b.id} canPay={canPay} amountOwed={owed} />}
       <p><a href="/bookings" className="text-sm underline">← My bookings</a></p>
     </div>

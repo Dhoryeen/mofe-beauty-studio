@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { desc, eq } from "drizzle-orm";
 import { db } from "./db";
-import { payments, quoteApprovals, quotes, services, settings, trials } from "../db/schema";
+import { bookings, payments, quoteApprovals, quotes, services, settings, trials } from "../db/schema";
 import { staffFree } from "./slots";
 import { applyPaymentSuccess, markPaymentFailed } from "./payments/reconcile";
 import { initializePayment, providerName } from "./payments";
@@ -136,6 +136,19 @@ export async function decideQuote(quoteId: string, userId: string, decision: "ap
       note: note ?? "",
       createdAt: now
     });
+    // An approved quote locks the price into the linked request booking,
+    // releasing it for deposit payment.
+    if (decision === "approved" && q.bookingId) {
+      await tx
+        .update(bookings)
+        .set({
+          totalNaira: q.totalNaira,
+          depositNaira: q.depositNaira,
+          status: "pending_payment",
+          updatedAt: now
+        })
+        .where(eq(bookings.id, q.bookingId));
+    }
   });
   return { ok: true };
 }

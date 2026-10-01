@@ -168,12 +168,16 @@ export const bookings = pgTable("bookings", {
     .notNull()
     .references(() => services.id),
   lookId: text("look_id"),
-  // pending_payment | confirmed | reschedule_pending | completed | cancelled
+  // pending_payment | confirmed | reschedule_pending | completed | cancelled | request
   status: text("status").notNull().default("pending_payment"),
   slotStart: timestamp("slot_start", { withTimezone: true }).notNull(),
   slotEnd: timestamp("slot_end", { withTimezone: true }).notNull(),
   readinessDeadline: timestamp("readiness_deadline", { withTimezone: true }),
   preferredTime: text("preferred_time"),
+  // Phase 6: off-site location, tentative-hold expiry, group linkage.
+  location: text("location"),
+  holdUntil: timestamp("hold_until", { withTimezone: true }),
+  groupId: text("group_id"),
   totalNaira: integer("total_naira").notNull(),
   depositNaira: integer("deposit_naira").notNull(),
   paidNaira: integer("paid_naira").notNull().default(0),
@@ -225,6 +229,52 @@ export const waitlist = pgTable("waitlist", {
   note: text("note").notNull().default(""),
   // open | notified | closed
   status: text("status").notNull().default("open"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// --- Phase 6: studio-confirmation requests and group coordination ---
+
+export const groups = pgTable("groups", {
+  id: text("id").primaryKey(),
+  organiserId: text("organiser_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  eventDate: timestamp("event_date", { withTimezone: true }),
+  location: text("location"),
+  readinessDeadline: timestamp("readiness_deadline", { withTimezone: true }),
+  sizeInt: integer("size_int").notNull().default(1),
+  // organiser | split — who pays.
+  payMode: text("pay_mode").notNull().default("split"),
+  sharedNaira: integer("shared_naira").notNull().default(0),
+  sharedNote: text("shared_note").notNull().default(""),
+  // request | quoted | awaiting_deposits | confirmed | cancelled
+  status: text("status").notNull().default("request"),
+  note: text("note").notNull().default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+export const groupMembers = pgTable("group_members", {
+  id: text("id").primaryKey(),
+  groupId: text("group_id")
+    .notNull()
+    .references(() => groups.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  role: text("role").notNull().default("member"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+export const groupInvites = pgTable("group_invites", {
+  id: text("id").primaryKey(),
+  groupId: text("group_id")
+    .notNull()
+    .references(() => groups.id, { onDelete: "cascade" }),
+  email: text("email").notNull(),
+  // pending | accepted
+  status: text("status").notNull().default("pending"),
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
 

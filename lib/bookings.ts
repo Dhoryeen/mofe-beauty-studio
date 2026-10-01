@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { bookingStaff, bookings, consultationCredits, looks, payments, services } from "../db/schema";
 import { staffForService, staffFree } from "./slots";
+import { bookingPayable } from "./requests";
 import { applyPaymentSuccess, markPaymentFailed } from "./payments/reconcile";
 import { initializePayment, providerName } from "./payments";
 import { findCredit } from "./consultations";
@@ -145,6 +146,8 @@ export async function payTowards(opts: {
   }
   const remaining = booking.totalNaira - booking.creditNaira - booking.paidNaira;
   if (remaining <= 0) throw Object.assign(new Error("Nothing owed"), { status: 400 });
+  const gate = await bookingPayable(booking.id);
+  if (!gate.ok) throw Object.assign(new Error(gate.error), { status: 400 });
   const depositCashOwed = Math.max(booking.depositNaira - booking.creditNaira - booking.paidNaira, 0);
   const amount = opts.kind === "due" ? depositCashOwed > 0 ? depositCashOwed : remaining : remaining;
 

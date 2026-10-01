@@ -3,23 +3,21 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { bookings } from "@/db/schema";
-import { createBooking } from "@/lib/bookings";
+import { createRequest } from "@/lib/requests";
 
 function err(e: unknown) {
   const status = (e as { status?: number })?.status ?? 500;
-  const message = e instanceof Error ? e.message : "Booking failed";
-  return NextResponse.json({ error: message }, { status });
+  return NextResponse.json({ error: e instanceof Error ? e.message : "Failed" }, { status });
 }
 
+// Requests are bookings with status `request` — a date ask, never a confirmation.
 export async function GET() {
   const session = await getSession();
   if (!session?.user) return NextResponse.json({ error: "Sign in required" }, { status: 401 });
-  const rows = await db
-    .select()
-    .from(bookings)
-    .where(eq(bookings.userId, session.user.id))
-    .orderBy(desc(bookings.createdAt));
-  return NextResponse.json({ bookings: rows });
+  const role = (session.user as { role?: string } | undefined)?.role;
+  const all = await db.select().from(bookings).where(eq(bookings.status, "request")).orderBy(desc(bookings.createdAt));
+  const rows = role === "manager" ? all : all.filter((b) => b.userId === session.user.id);
+  return NextResponse.json({ requests: rows });
 }
 
 export async function POST(req: Request) {
@@ -27,21 +25,16 @@ export async function POST(req: Request) {
   if (!session?.user) return NextResponse.json({ error: "Sign in required" }, { status: 401 });
   try {
     const body = await req.json();
-    if (body.location) {
-      return NextResponse.json({ error: "Off-site services need studio confirmation — send a request instead" }, { status: 400 });
-    }
-    const result = await createBooking({
+    const result = await createRequest({
       userId: session.user.id,
-      email: session.user.email,
       serviceId: body.serviceId,
       lookId: body.lookId ?? undefined,
-      staffIds: Array.isArray(body.staffIds) ? body.staffIds : [],
+      staffId: body.staffId && body.staffId !== "match" ? body.staffId : undefined,
+      location: body.location ?? undefined,
       slotStart: body.slotStart,
-      payMode: body.payMode === "full" ? "full" : "deposit",
       readinessDeadline: body.readinessDeadline ?? undefined,
       preferredTime: body.preferredTime ?? undefined,
-      // Dev-only: exercises the failed-payment path on the mock provider.
-      simulate: process.env.PAYSTACK_SECRET_KEY ? undefined : body.simulate
+      groupId: body.groupId ?? undefined
     });
     return NextResponse.json(result, { status: 201 });
   } catch (e) {

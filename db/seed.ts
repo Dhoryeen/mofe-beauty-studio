@@ -16,6 +16,7 @@ const DEFAULT_SETTINGS: Array<[string, string]> = [
   ["review_per_booking", "1"],
   ["review_publication", "consent_required"],
   ["photo_public_use_default", "unselected"],
+  ["request_hold_hours", "48"],
   ["consultation_fee", "10000"],
   ["consultation_duration_min", "30"],
   ["trial_fee", "15000"],
