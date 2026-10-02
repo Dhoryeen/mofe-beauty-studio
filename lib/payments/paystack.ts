@@ -21,7 +21,10 @@ export async function paystackInitialize(opts: { email: string; amountNaira: num
     })
   });
   const data = await res.json();
-  if (!data?.status) throw new Error(data?.message ?? "Paystack initialize failed");
+  if (!data?.status) {
+    // Surface provider validation (e.g. bad email) as a client error, not a 500.
+    throw Object.assign(new Error(data?.message ?? "Paystack initialize failed"), { status: 400 });
+  }
   return { reference, authorizationUrl: data.data.authorization_url as string, immediate: null };
 }
 
