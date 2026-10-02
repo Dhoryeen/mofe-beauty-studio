@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Everyday polish sample look">
+  <rect width="400" height="300" fill="#e9e4d8"/>
+  <ellipse cx="200" cy="130" rx="118" ry="108" fill="#dcd5c4"/>
+  <ellipse cx="200" cy="292" rx="108" ry="66" fill="#4c5b4c"/>
+  <rect x="184" y="192" width="32" height="44" rx="12" fill="#8a5a38"/>
+  <ellipse cx="200" cy="142" rx="60" ry="76" fill="#9c6b43"/>
+  <path d="M142 128 Q142 66 200 60 Q258 66 258 128 Q256 100 244 94 Q246 120 240 132 Q238 104 220 100 Q200 116 180 100 Q162 104 160 132 Q154 120 156 94 Q144 100 142 128 Z" fill="#2a1e16"/>
+  <path d="M165 119 Q179 113 193 117" stroke="#241a17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M207 117 Q221 113 235 119" stroke="#241a17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M167 141 Q177 146 188 142" stroke="#3a2716" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M212 142 Q223 146 233 141" stroke="#3a2716" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <ellipse cx="167" cy="162" rx="10" ry="6" fill="#b98a6e" opacity="0.3"/>
+  <ellipse cx="233" cy="162" rx="10" ry="6" fill="#b98a6e" opacity="0.3"/>
+  <path d="M197 177 Q200 174 203 177" stroke="#7a5232" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M183 190 Q200 186 217 190 Q200 200 183 190 Z" fill="#b98a6e"/>
+</svg>

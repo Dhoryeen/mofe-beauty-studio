@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Soft bridal glam sample look">
+  <rect width="400" height="300" fill="#f7e8dd"/>
+  <ellipse cx="200" cy="130" rx="120" ry="110" fill="#f3ddd4"/>
+  <ellipse cx="200" cy="290" rx="110" ry="70" fill="#b07d3c"/>
+  <rect x="182" y="190" width="36" height="46" rx="12" fill="#7c4c31"/>
+  <ellipse cx="200" cy="140" rx="62" ry="78" fill="#8d5a3b"/>
+  <path d="M138 130 Q132 60 200 52 Q268 60 262 130 Q258 96 240 88 Q220 110 200 108 Q178 110 160 88 Q142 96 138 130 Z" fill="#1c1512"/>
+  <circle cx="200" cy="46" r="22" fill="#1c1512"/>
+  <path d="M162 118 Q178 110 194 116" stroke="#241a17" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M206 116 Q222 110 238 118" stroke="#241a17" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M164 140 Q176 146 188 141" stroke="#2b1c12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M212 141 Q224 146 236 140" stroke="#2b1c12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="164" cy="162" rx="12" ry="7" fill="#c4707e" opacity="0.35"/>
+  <ellipse cx="236" cy="162" rx="12" ry="7" fill="#c4707e" opacity="0.35"/>
+  <path d="M196 176 Q200 172 204 176" stroke="#6f452b" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M180 190 Q200 184 220 190 Q200 202 180 190 Z" fill="#c4707e"/>
+  <path d="M180 190 Q200 184 220 190 Q200 194 180 190 Z" fill="#d68a94"/>
+  <circle cx="138" cy="168" r="4" fill="#b07d3c"/>
+  <circle cx="262" cy="168" r="4" fill="#b07d3c"/>
+</svg>

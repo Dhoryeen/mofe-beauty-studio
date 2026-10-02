@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Birthday soft glam sample look">
+  <rect width="400" height="300" fill="#c96f4a"/>
+  <ellipse cx="200" cy="128" rx="122" ry="110" fill="#d98a63"/>
+  <ellipse cx="200" cy="292" rx="110" ry="68" fill="#241a17"/>
+  <path d="M132 150 Q128 70 200 62 Q272 70 268 150 Q266 190 246 196 Q252 160 240 150 Q244 180 228 186 Q208 170 192 172 Q172 176 158 186 Q144 176 148 150 Q138 160 154 196 Q134 190 132 150 Z" fill="#17110d"/>
+  <rect x="184" y="192" width="32" height="44" rx="12" fill="#684026"/>
+  <ellipse cx="200" cy="142" rx="60" ry="76" fill="#7a4e30"/>
+  <path d="M164 118 Q179 110 194 116" stroke="#241a17" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M206 116 Q221 110 236 118" stroke="#241a17" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M166 141 Q177 147 189 142" stroke="#2e1d10" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M211 142 Q223 147 234 141" stroke="#2e1d10" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="165" cy="163" rx="13" ry="8" fill="#e0705a" opacity="0.45"/>
+  <ellipse cx="235" cy="163" rx="13" ry="8" fill="#e0705a" opacity="0.45"/>
+  <path d="M197 177 Q200 173 203 177" stroke="#59341e" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M181 190 Q200 184 219 190 Q200 203 181 190 Z" fill="#e0705a"/>
+  <path d="M181 190 Q200 184 219 190 Q200 193 181 190 Z" fill="#f0927a"/>
+  <circle cx="262" cy="168" r="5" fill="#f6ead9"/>
+</svg>

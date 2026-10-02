@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Matte party look sample">
+  <rect width="400" height="300" fill="#2e362e"/>
+  <ellipse cx="200" cy="126" rx="122" ry="110" fill="#3c463c"/>
+  <ellipse cx="200" cy="292" rx="110" ry="68" fill="#b07d3c"/>
+  <path d="M200 52 Q236 90 232 190 L214 190 Q220 120 200 84 Z" fill="#0e0b08"/>
+  <rect x="184" y="192" width="32" height="44" rx="12" fill="#74482a"/>
+  <ellipse cx="200" cy="142" rx="60" ry="76" fill="#8a5738"/>
+  <path d="M142 126 Q142 64 200 58 Q258 64 258 126 Q254 94 236 88 Q216 110 200 108 Q182 110 164 88 Q146 94 142 126 Z" fill="#0e0b08"/>
+  <circle cx="200" cy="46" r="18" fill="#0e0b08"/>
+  <path d="M164 118 Q179 110 194 116" stroke="#14100d" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M206 116 Q221 110 236 118" stroke="#14100d" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M163 140 L177 145 M223 145 L237 140" stroke="#14100d" stroke-width="3" stroke-linecap="round"/>
+  <path d="M167 143 Q178 148 189 144" stroke="#2b1c12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M211 144 Q222 148 233 143" stroke="#2b1c12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="166" cy="163" rx="11" ry="6" fill="#8e1f2f" opacity="0.3"/>
+  <ellipse cx="234" cy="163" rx="11" ry="6" fill="#8e1f2f" opacity="0.3"/>
+  <path d="M180 190 Q200 185 220 190 Q200 201 180 190 Z" fill="#8e1f2f"/>
+  <rect x="256" y="158" width="8" height="22" rx="4" fill="#b07d3c"/>
+</svg>

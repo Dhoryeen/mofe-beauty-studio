@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Everyday silk press sample look">
+  <rect width="400" height="300" fill="#d8d5cf"/>
+  <ellipse cx="200" cy="128" rx="120" ry="110" fill="#c6c2b9"/>
+  <ellipse cx="200" cy="292" rx="110" ry="68" fill="#7a6a64"/>
+  <rect x="146" y="92" width="30" height="130" rx="15" fill="#100d0a"/>
+  <rect x="224" y="92" width="30" height="130" rx="15" fill="#100d0a"/>
+  <rect x="184" y="192" width="32" height="44" rx="12" fill="#59391f"/>
+  <ellipse cx="200" cy="142" rx="60" ry="76" fill="#6b4429"/>
+  <path d="M142 126 Q142 64 200 60 Q258 64 258 126 L247 126 Q247 86 200 84 Q153 86 153 126 Z" fill="#100d0a"/>
+  <path d="M164 119 Q179 112 194 117" stroke="#1c1512" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M206 117 Q221 112 236 119" stroke="#1c1512" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M166 141 Q177 147 189 142" stroke="#241a17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M211 142 Q223 147 234 141" stroke="#241a17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="166" cy="162" rx="11" ry="6" fill="#c08070" opacity="0.35"/>
+  <ellipse cx="234" cy="162" rx="11" ry="6" fill="#c08070" opacity="0.35"/>
+  <path d="M197 177 Q200 174 203 177" stroke="#4e3018" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M183 190 Q200 185 217 190 Q200 201 183 190 Z" fill="#c08070"/>
+  <path d="M183 190 Q200 185 217 190 Q200 193 183 190 Z" fill="#d8a08e"/>
+</svg>

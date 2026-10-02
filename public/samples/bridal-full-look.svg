@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Bridal full look sample">
+  <rect width="400" height="300" fill="#f6ead9"/>
+  <ellipse cx="200" cy="132" rx="128" ry="115" fill="#efdcbd"/>
+  <ellipse cx="200" cy="292" rx="114" ry="70" fill="#8e2f3c"/>
+  <circle cx="150" cy="120" r="30" fill="#241a12"/>
+  <circle cx="250" cy="120" r="30" fill="#241a12"/>
+  <circle cx="200" cy="70" r="30" fill="#241a12"/>
+  <rect x="184" y="192" width="32" height="44" rx="12" fill="#8a5636"/>
+  <ellipse cx="200" cy="142" rx="60" ry="76" fill="#a06a42"/>
+  <path d="M142 128 Q140 66 200 58 Q260 66 258 128 Q254 96 238 88 Q218 110 200 108 Q180 110 162 88 Q146 96 142 128 Z" fill="#241a12"/>
+  <path d="M120 300 Q120 120 200 60 Q280 120 280 300 Q240 260 200 260 Q160 260 120 300 Z" fill="#ffffff" opacity="0.35"/>
+  <path d="M164 118 Q179 109 195 116" stroke="#1c1512" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M205 116 Q221 109 236 118" stroke="#1c1512" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M163 140 L176 144 M224 144 L237 140" stroke="#1c1512" stroke-width="3" stroke-linecap="round"/>
+  <path d="M166 143 Q178 149 190 144" stroke="#2b1c12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M210 144 Q222 149 234 143" stroke="#2b1c12" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="166" cy="163" rx="12" ry="7" fill="#b03a48" opacity="0.4"/>
+  <ellipse cx="234" cy="163" rx="12" ry="7" fill="#b03a48" opacity="0.4"/>
+  <path d="M180 190 Q200 183 220 190 Q200 204 180 190 Z" fill="#b03a48"/>
+  <path d="M180 190 Q200 183 220 190 Q200 192 180 190 Z" fill="#d4697a"/>
+</svg>

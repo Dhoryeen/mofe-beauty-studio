@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Classic bridal updo sample look">
+  <rect width="400" height="300" fill="#f3ddd4"/>
+  <ellipse cx="200" cy="135" rx="125" ry="112" fill="#e8c9b8"/>
+  <ellipse cx="200" cy="295" rx="112" ry="68" fill="#4c5b4c"/>
+  <rect x="184" y="192" width="32" height="44" rx="12" fill="#5e3a22"/>
+  <ellipse cx="200" cy="142" rx="60" ry="76" fill="#6f452b"/>
+  <path d="M140 132 Q136 64 200 56 Q264 64 260 132 Q256 98 238 90 Q218 112 200 110 Q180 112 162 90 Q144 98 140 132 Z" fill="#0f0c0a"/>
+  <circle cx="200" cy="48" r="26" fill="#0f0c0a"/>
+  <path d="M150 84 Q200 40 250 84" stroke="#b07d3c" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <circle cx="200" cy="58" r="5" fill="#b07d3c"/>
+  <path d="M164 120 Q179 112 194 118" stroke="#1c1512" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M206 118 Q221 112 236 120" stroke="#1c1512" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M166 142 Q177 148 189 143" stroke="#241a17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M211 143 Q223 148 234 142" stroke="#241a17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="166" cy="164" rx="11" ry="6" fill="#a8565f" opacity="0.35"/>
+  <ellipse cx="234" cy="164" rx="11" ry="6" fill="#a8565f" opacity="0.35"/>
+  <path d="M197 178 Q200 174 203 178" stroke="#4e3018" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M182 191 Q200 186 218 191 Q200 202 182 191 Z" fill="#a8565f"/>
+</svg>
