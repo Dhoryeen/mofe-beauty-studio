@@ -1,10 +1,11 @@
 import { randomUUID } from "crypto";
 import { and, eq } from "drizzle-orm";
 import { db } from "./db";
-import { consultationCredits, consultations, payments, services, settings } from "../db/schema";
+import { consultationCredits, consultations, payments, services, settings, user } from "../db/schema";
 import { staffFree } from "./slots";
 import { applyPaymentSuccess, markPaymentFailed } from "./payments/reconcile";
 import { initializePayment, providerName } from "./payments";
+import { consultationBookedEmail, sendEmail } from "./email";
 
 async function setting(key: string, fallback: string) {
   const rows = await db.select().from(settings).where(eq(settings.key, key));
@@ -98,6 +99,19 @@ export async function applyConsultationPayment(paymentId: string) {
     .update(consultations)
     .set({ status: "booked", updatedAt: now })
     .where(eq(consultations.id, payment.consultationId));
+  const consult = (await db.select().from(consultations).where(eq(consultations.id, payment.consultationId)))[0];
+  const client = consult ? (await db.select().from(user).where(eq(user.id, consult.userId)))[0] : undefined;
+  const svc = consult ? (await db.select().from(services).where(eq(services.id, consult.serviceId)))[0] : undefined;
+  if (consult && client?.email) {
+    const mail = consultationBookedEmail({
+      name: client.name,
+      service: svc?.name ?? "Consultation",
+      mode: consult.mode,
+      slot: consult.slotStart ? new Date(consult.slotStart).toLocaleString() : "",
+      consultationId: payment.consultationId
+    });
+    await sendEmail({ to: client.email, subject: mail.subject, html: mail.html });
+  }
   return payment;
 }
 

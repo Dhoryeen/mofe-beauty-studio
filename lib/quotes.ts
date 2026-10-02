@@ -1,7 +1,8 @@
 import { randomUUID } from "crypto";
 import { desc, eq } from "drizzle-orm";
 import { db } from "./db";
-import { bookings, payments, quoteApprovals, quotes, services, settings, trials } from "../db/schema";
+import { bookings, payments, quoteApprovals, quotes, services, settings, trials, user } from "../db/schema";
+import { quoteAwaitingEmail, sendEmail } from "./email";
 import { staffFree } from "./slots";
 import { applyPaymentSuccess, markPaymentFailed } from "./payments/reconcile";
 import { initializePayment, providerName } from "./payments";
@@ -64,6 +65,19 @@ export async function createQuote(opts: {
     note: opts.note ?? "",
     createdBy: opts.createdBy
   });
+  if (opts.send) {
+    const client = (await db.select().from(user).where(eq(user.id, opts.userId)))[0];
+    if (client?.email) {
+      const mail = quoteAwaitingEmail({
+        name: client.name,
+        service: svc.name,
+        total,
+        validUntil: new Date(Date.now() + days * 86400000).toLocaleString(),
+        quoteId: id
+      });
+      await sendEmail({ to: client.email, subject: mail.subject, html: mail.html });
+    }
+  }
   return { id };
 }
 
