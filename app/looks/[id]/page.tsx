@@ -18,6 +18,10 @@ export default async function LookDetailPage({ params }: { params: { id: string 
   if (rows.length === 0) redirect("/looks");
   const look = rows[0];
   const images = await db.select().from(lookImages).where(eq(lookImages.lookId, look.id));
+  const { resolveUrl } = await import("@/lib/storage");
+  const shown = await Promise.all(
+    images.map(async (img) => ({ ...img, displayUrl: img.source === "gallery" ? null : await resolveUrl(img.url) }))
+  );
   const gallery = await db
     .select({ id: galleryItems.id, title: galleryItems.title })
     .from(galleryItems)
@@ -32,14 +36,14 @@ export default async function LookDetailPage({ params }: { params: { id: string 
       </div>
       {images.length > 0 && (
         <div className="grid gap-2 sm:grid-cols-3">
-          {images.map((img) =>
-            img.source === "gallery" ? (
+          {shown.map((img) =>
+            img.source === "gallery" || !img.displayUrl ? (
               <div key={img.id} className="flex h-28 items-center justify-center rounded-lg bg-blush text-xs text-muted">
                 Gallery pick
               </div>
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
-              <img key={img.id} src={img.url} alt="" className="h-28 w-full rounded-lg object-cover" />
+              <img key={img.id} src={img.displayUrl} alt="" className="h-28 w-full rounded-lg object-cover" />
             )
           )}
         </div>

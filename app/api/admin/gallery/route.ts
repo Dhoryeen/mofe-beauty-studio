@@ -20,7 +20,11 @@ export async function GET() {
   const denied = await manager();
   if (denied) return NextResponse.json({ error: denied.error }, { status: denied.status });
   const rows = await db.select().from(galleryItems).orderBy(asc(galleryItems.sortOrder));
-  return NextResponse.json({ items: rows });
+  const { resolveUrl } = await import("@/lib/storage");
+  const items = await Promise.all(
+    rows.map(async (r) => ({ ...r, displayUrl: await resolveUrl(r.imageUrl) }))
+  );
+  return NextResponse.json({ items });
 }
 
 export async function POST(req: Request) {

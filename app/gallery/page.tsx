@@ -34,6 +34,10 @@ export default async function GalleryPage({
     .from(galleryItems)
     .where(and(...conds))
     .orderBy(asc(galleryItems.sortOrder));
+  const { resolveUrl } = await import("@/lib/storage");
+  const shown = await Promise.all(
+    items.map(async (g) => ({ ...g, displayUrl: await resolveUrl(g.imageUrl) }))
+  );
   const active = {
     service: searchParams.service,
     occasion: searchParams.occasion,
@@ -80,11 +84,11 @@ export default async function GalleryPage({
         </p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-3">
-          {items.map((g) => (
+          {shown.map((g) => (
             <div key={g.id} className="overflow-hidden rounded-lg bg-card shadow-card">
-              {g.imageUrl ? (
+              {g.displayUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={g.imageUrl} alt={g.title} className="h-36 w-full object-cover" />
+                <img src={g.displayUrl} alt={g.title} className="h-36 w-full object-cover" />
               ) : (
                 <div className="flex h-36 items-center justify-center bg-blush text-sm text-muted">
                   Photo placeholder

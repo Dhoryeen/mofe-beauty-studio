@@ -12,6 +12,7 @@ type Item = {
   finish: string | null;
   hairLength: string | null;
   imageUrl: string | null;
+  displayUrl: string | null;
   active: boolean;
   sortOrder: number;
 };
@@ -39,13 +40,14 @@ export function AdminGallery() {
     load();
   }, []);
 
-  async function upload(f: File): Promise<string> {
+  async function upload(f: File): Promise<{ url: string; displayUrl: string }> {
     const fd = new FormData();
     fd.append("file", f);
+    fd.append("visibility", "public");
     const res = await fetch("/api/uploads", { method: "POST", body: fd });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error ?? "Upload failed");
-    return data.url as string;
+    return { url: data.url as string, displayUrl: data.displayUrl as string };
   }
 
   async function create(e: React.FormEvent) {
@@ -57,11 +59,11 @@ export function AdminGallery() {
     }
     setBusy(true);
     try {
-      const imageUrl = file ? await upload(file) : null;
+      const uploaded = file ? await upload(file) : null;
       const res = await fetch("/api/admin/gallery", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, sortOrder: Number(form.sortOrder) || 0, imageUrl })
+        body: JSON.stringify({ ...form, sortOrder: Number(form.sortOrder) || 0, imageUrl: uploaded?.url ?? null })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Create failed");
@@ -141,9 +143,9 @@ export function AdminGallery() {
       <div className="grid gap-3">
         {items.map((g) => (
           <div key={g.id} className="flex items-center gap-4 rounded-lg bg-card p-3 shadow-card">
-            {g.imageUrl ? (
+            {g.displayUrl ?? g.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={g.imageUrl} alt="" className="h-16 w-16 rounded-md object-cover" />
+              <img src={g.displayUrl ?? g.imageUrl ?? ""} alt="" className="h-16 w-16 rounded-md object-cover" />
             ) : (
               <div className="flex h-16 w-16 items-center justify-center rounded-md bg-blush text-[10px] text-muted">
                 No photo
