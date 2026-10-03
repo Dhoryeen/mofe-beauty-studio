@@ -5,8 +5,12 @@ import { db } from "./db";
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg" }),
   emailAndPassword: { enabled: true },
-  // Local dev runs on 3000 or 3100 — both are trusted origins.
-  trustedOrigins: ["http://localhost:3000", "http://localhost:3100"],
+  // Local dev ports plus the deployed origin (BETTER_AUTH_URL in production).
+  trustedOrigins: [
+    "http://localhost:3000",
+    "http://localhost:3100",
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : [])
+  ],
   user: {
     additionalFields: {
       // client | manager | beautician_consultant. Not settable via the API.
