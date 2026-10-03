@@ -128,7 +128,9 @@ async function main() {
       .values({ ...g, active: true })
       .onConflictDoUpdate({
         target: galleryItems.id,
-        set: { title: g.title, service: g.service, occasion: g.occasion, finish: g.finish, hairLength: g.hairLength, sortOrder: g.sortOrder, imageUrl: g.imageUrl, active: true }
+        // NOTE: active is intentionally untouched here — items hidden
+        // in the gallery admin stay hidden across re-seeds.
+        set: { title: g.title, service: g.service, occasion: g.occasion, finish: g.finish, hairLength: g.hairLength, sortOrder: g.sortOrder, imageUrl: g.imageUrl }
       });
   }
 
