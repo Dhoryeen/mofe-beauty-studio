@@ -20,9 +20,11 @@ function dayKey(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function BookFlow({ services, staff }: { services: Service[]; staff: StaffMember[] }) {
+export function BookFlow({ services, staff, initialServiceId }: { services: Service[]; staff: StaffMember[]; initialServiceId?: string }) {
   const router = useRouter();
-  const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
+  const [serviceId, setServiceId] = useState(
+    services.some((s) => s.id === initialServiceId) ? (initialServiceId as string) : (services[0]?.id ?? "")
+  );
   const [staffPick, setStaffPick] = useState("match");
   const [date, setDate] = useState(() => dayKey(new Date(Date.now() + 86400000)));
   const [slots, setSlots] = useState<Slot[]>([]);

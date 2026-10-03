@@ -14,7 +14,8 @@
     "db:migrate": "tsx --env-file=.env.local db/migrate.ts",
     "db:seed": "tsx --env-file=.env.local db/seed.ts",
     "db:setup": "npm run db:generate && npm run db:migrate && npm run db:seed",
-    "storage:backfill": "tsx --env-file=.env.local db/backfill-uploads.ts"
+    "storage:backfill": "tsx --env-file=.env.local db/backfill-uploads.ts",
+    "notify:reminders": "tsx --env-file=.env.local db/remind.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1145.0",

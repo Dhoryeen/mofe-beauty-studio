@@ -17,6 +17,7 @@ const DEFAULT_SETTINGS: Array<[string, string]> = [
   ["review_publication", "consent_required"],
   ["photo_public_use_default", "unselected"],
   ["request_hold_hours", "48"],
+  ["cancellation_terms", "Cancel more than 48 hours ahead for a full refund of amounts paid. Inside 48 hours, refunds are at management discretion. Consultation and trial fees follow their own published terms."],
   ["consultation_fee", "10000"],
   ["consultation_duration_min", "30"],
   ["trial_fee", "15000"],

@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { bookingStaff, bookings, payments, services, user } from "@/db/schema";
-import { payTowards, reschedule } from "@/lib/bookings";
+import { requestReschedule } from "@/lib/changes";
 
 async function owned(id: string, userId: string, role?: string) {
   const rows = await db.select().from(bookings).where(eq(bookings.id, id));
@@ -43,7 +43,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     // Only the owner reschedules here; managers handle exceptions elsewhere.
     const b = await owned(params.id, session.user.id, undefined);
     if (!b) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    const result = await reschedule({ bookingId: b.id, userId: session.user.id, slotStart: body.slotStart });
+    // Policy routing: free instant self-serve, or a manager-approval request
+    // that keeps the original slot confirmed meanwhile.
+    const result = await requestReschedule(session.user.id, b.id, body.slotStart);
     return NextResponse.json(result);
   } catch (e) {
     const status = (e as { status?: number })?.status ?? 500;

@@ -46,3 +46,14 @@ export function verifyWebhookSignature(rawBody: string, signature: string | null
     return false;
   }
 }
+
+export async function paystackRefund(reference: string, amountNaira: number) {
+  const res = await fetch(`${BASE}/refund`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${secret()}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ transaction: reference, amount: amountNaira * 100 })
+  });
+  const data = await res.json();
+  if (!data?.status) throw new Error(data?.message ?? "Paystack refund failed");
+  return data;
+}

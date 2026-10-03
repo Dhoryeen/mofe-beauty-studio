@@ -7,6 +7,7 @@ import { Button } from "@/components/design-system/Button";
 export function BookingActions({ id, canPay, amountOwed }: { id: string; canPay: boolean; amountOwed: number }) {
   const router = useRouter();
   const [msg, setMsg] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [newSlot, setNewSlot] = useState("");
 
@@ -46,6 +47,9 @@ export function BookingActions({ id, canPay, amountOwed }: { id: string; canPay:
       setMsg(data.error ?? "Reschedule failed");
       return;
     }
+    if (data.requested) {
+      setInfo("Sent to the studio for approval — your original slot stays confirmed meanwhile.");
+    }
     router.refresh();
   }
 
@@ -74,6 +78,7 @@ export function BookingActions({ id, canPay, amountOwed }: { id: string; canPay:
         </div>
       </form>
       {msg && <p className="text-sm text-danger">{msg}</p>}
+      {info && <p className="text-sm text-muted">{info}</p>}
     </div>
   );
 }

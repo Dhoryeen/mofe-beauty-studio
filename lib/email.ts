@@ -96,3 +96,70 @@ export function consultationBookedEmail(o: { name: string; service: string; mode
     )
   };
 }
+
+export function reminderEmail(o: { name: string; service: string; slot: string; kind: string; bookingId: string }) {
+  const when = o.kind === "24h" ? "tomorrow (24 hours)" : "in 2 days (48 hours)";
+  return {
+    subject: `Reminder: ${o.service} ${o.kind === "24h" ? "tomorrow" : "in 2 days"}`,
+    html: base(
+      "Appointment reminder",
+      `<p>Hi ${o.name},</p>
+<p>Your <strong>${o.service}</strong> is ${when}: <strong>${o.slot}</strong>.</p>
+<p>Please complete any preparation tasks and arrive on time. Reply in your booking messages if anything changed.</p>
+<p><a href="${appUrl()}/bookings/${o.bookingId}">View your booking</a></p>`
+    )
+  };
+}
+
+export function refundDecidedEmail(o: { name: string; amount: number; approved: boolean; note: string; bookingId: string }) {
+  return {
+    subject: o.approved ? `Refund approved — ${naira(o.amount)}` : `Refund request reviewed`,
+    html: base(
+      o.approved ? "Refund approved" : "Refund update",
+      o.approved
+        ? `<p>Hi ${o.name},</p>
+<p>A refund of <strong>${naira(o.amount)}</strong> was approved${o.note ? ` — ${o.note}` : ""}. It should reach your original payment method shortly; card refunds can take a few business days.</p>
+<p><a href="${appUrl()}/bookings/${o.bookingId}">View your booking</a></p>`
+        : `<p>Hi ${o.name},</p>
+<p>The studio reviewed your refund request and could not approve it${o.note ? ` — ${o.note}` : ""}. Reply in your booking messages if you have questions.</p>
+<p><a href="${appUrl()}/bookings/${o.bookingId}">View your booking</a></p>`
+    )
+  };
+}
+
+export function reviewRequestEmail(o: { name: string; service: string; bookingId: string }) {
+  return {
+    subject: `How was your ${o.service}?`,
+    html: base(
+      "How did it go?",
+      `<p>Hi ${o.name},</p>
+<p>Thanks for visiting Mofe Beauty Studio. Please leave a quick review of your <strong>${o.service}</strong> — one per booking, published only with your consent.</p>
+<p><a href="${appUrl()}/bookings/${o.bookingId}">Leave a review</a></p>`
+    )
+  };
+}
+
+export function rescheduleNoticeEmail(o: { name: string; service: string; oldSlot: string; newSlot: string; bookingId: string }) {
+  return {
+    subject: `Appointment moved — ${o.service}`,
+    html: base(
+      "Appointment rescheduled",
+      `<p>Hi ${o.name},</p>
+<p>Your <strong>${o.service}</strong> moved from <strong>${o.oldSlot}</strong> to <strong>${o.newSlot}</strong>.</p>
+<p><a href="${appUrl()}/bookings/${o.bookingId}">View your booking</a></p>`
+    )
+  };
+}
+
+export function delayNoticeEmail(o: { name: string; service: string; body: string; bookingId: string }) {
+  return {
+    subject: `Preparation update — ${o.service}`,
+    html: base(
+      "Preparation update",
+      `<p>Hi ${o.name},</p>
+<p>An update on your <strong>${o.service}</strong> preparation:</p>
+<p>${o.body}</p>
+<p><a href="${appUrl()}/bookings/${o.bookingId}">View your booking</a></p>`
+    )
+  };
+}

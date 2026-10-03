@@ -7,7 +7,7 @@ import { BookFlow } from "@/components/BookFlow";
 
 export const dynamic = "force-dynamic";
 
-export default async function BookPage() {
+export default async function BookPage({ searchParams }: { searchParams: { serviceId?: string } }) {
   const session = await getSession();
   if (!session?.user) redirect("/sign-in");
 
@@ -24,7 +24,7 @@ export default async function BookPage() {
         <h1 className="text-2xl font-semibold">Book a service</h1>
         <p className="text-sm text-muted">Instant booking for standard services — every slot is capacity-checked.</p>
       </div>
-      <BookFlow services={svcRows.filter((s) => s.active)} staff={profRows} />
+      <BookFlow services={svcRows.filter((s) => s.active)} staff={profRows} initialServiceId={searchParams.serviceId} />
     </div>
   );
 }

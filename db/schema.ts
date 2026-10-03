@@ -178,6 +178,9 @@ export const bookings = pgTable("bookings", {
   location: text("location"),
   holdUntil: timestamp("hold_until", { withTimezone: true }),
   groupId: text("group_id"),
+  // Phase 7: free-reschedule usage, personalised aftercare.
+  rescheduleCount: integer("reschedule_count").notNull().default(0),
+  aftercare: text("aftercare").notNull().default(""),
   totalNaira: integer("total_naira").notNull(),
   depositNaira: integer("deposit_naira").notNull(),
   paidNaira: integer("paid_naira").notNull().default(0),
@@ -386,4 +389,125 @@ export const trials = pgTable("trials", {
   feedback: text("feedback").notNull().default(""),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
+// --- Phase 7: progress, messages, changes/refunds, completion ---
+
+// Preparation tasks: studio work (extensions, accessories) or client homework.
+export const prepTasks = pgTable("prep_tasks", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  // client | studio
+  owner: text("owner").notNull().default("studio"),
+  // open | done
+  status: text("status").notNull().default("open"),
+  dueAt: timestamp("due_at", { withTimezone: true }),
+  createdBy: text("created_by").references(() => user.id),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Beautician progress posts, delay notices, trial outcomes, progress photos.
+export const progressUpdates = pgTable("progress_updates", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id),
+  body: text("body").notNull(),
+  imageUrl: text("image_url"),
+  // update | delay
+  kind: text("kind").notNull().default("update"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Private per-booking message thread (text + photos).
+export const messages = pgTable("messages", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id),
+  body: text("body").notNull(),
+  imageUrl: text("image_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Reschedule asks that need manager approval. The original slot stays
+// confirmed while pending unless the client explicitly cancels it.
+export const rescheduleRequests = pgTable("reschedule_requests", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  requestedBy: text("requested_by")
+    .notNull()
+    .references(() => user.id),
+  newStart: timestamp("new_start", { withTimezone: true }).notNull(),
+  newEnd: timestamp("new_end", { withTimezone: true }).notNull(),
+  // pending | approved | rejected
+  status: text("status").notNull().default("pending"),
+  decisionNote: text("decision_note").notNull().default(""),
+  decidedBy: text("decided_by").references(() => user.id),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Refunds: requested by client on cancel, decided by management.
+export const refunds = pgTable("refunds", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  paymentId: text("payment_id").references(() => payments.id),
+  amountNaira: integer("amount_naira").notNull(),
+  reason: text("reason").notNull().default(""),
+  // pending | approved | rejected | processed
+  status: text("status").notNull().default("pending"),
+  decidedBy: text("decided_by").references(() => user.id),
+  decisionNote: text("decision_note").notNull().default(""),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// One review per completed booking; publication needs explicit consent.
+export const reviews = pgTable("reviews", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id").notNull().unique(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  rating: integer("rating").notNull(),
+  body: text("body").notNull().default(""),
+  publishConsent: boolean("publish_consent").notNull().default(false),
+  // private | published
+  status: text("status").notNull().default("private"),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Separate permissions for privately saving vs publicly using client photos.
+export const photoConsents = pgTable("photo_consents", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  imageUrl: text("image_url").notNull(),
+  // private_save | public_use
+  purpose: text("purpose").notNull(),
+  granted: boolean("granted").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow()
+});
+
+// Reminder sends (48h / 24h) — one row each so jobs never double-send.
+export const reminders = pgTable("reminders", {
+  id: text("id").primaryKey(),
+  bookingId: text("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(),
+  sentAt: timestamp("sent_at", { withTimezone: true }).notNull().defaultNow()
 });
