@@ -53,8 +53,12 @@ Requires PostgreSQL 18 binaries on PATH as `C:\Program Files\PostgreSQL\18\bin`
 - Copy `.env.example` to `.env.local` and fill in values.
 - `npm run db:setup` — generate + apply migrations + seed settings, services, dev manager.
 - `npm run dev` — open http://localhost:3000. Sign up as a client, or sign in as the
-  seeded manager to view `/admin/settings`. `/services` reads live from PostgreSQL.
+  seeded manager to view `/admin`. `/services` reads live from PostgreSQL.
 - `npm run db:stop` — stop the local cluster.
+- `npm run notify:reminders` — send due 48h/24h appointment reminders (once each).
+- Key routes: `/book` (instant booking), `/requests/new` (bridal/complex/off-site/group asks),
+  `/consultations`, `/quotes`, `/groups`, `/bookings` (progress, messages, prep, changes, completion),
+  `/work` (beautician workspace), `/admin` (manager dashboard + reports).
 
 ## Out of scope for launch
 

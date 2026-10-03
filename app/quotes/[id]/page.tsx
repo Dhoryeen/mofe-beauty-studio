@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/session";
-import { quoteApprovals, quotes, services, trials, user } from "@/db/schema";
+import { quoteApprovals, quotes, services, settings, trials, user } from "@/db/schema";
 import { effectiveStatus, quoteHistory } from "@/lib/quotes";
 import { QuoteTable } from "@/components/design-system/QuoteTable";
 import { ApprovalBanner } from "@/components/design-system/ApprovalBanner";
@@ -34,6 +34,8 @@ export default async function QuoteDetailPage({ params }: { params: { id: string
   const isOwner = q.userId === session.user.id;
   const isStudio = role === "manager" || (role === "beautician_consultant" && q.createdBy === session.user.id);
   const staff = await staffForService(svc?.category ?? "makeup");
+  const settingRows = await db.select().from(settings);
+  const trialFee = Number(settingRows.find((r) => r.key === "trial_fee")?.value ?? "15000");
 
   return (
     <div className="grid gap-5">
@@ -95,7 +97,8 @@ export default async function QuoteDetailPage({ params }: { params: { id: string
       )}
 
       <div className="grid gap-3 rounded-lg bg-card p-4 shadow-card">
-        <h2 className="font-semibold">Paid trial</h2>
+        <h2 className="font-semibold">Paid trial — ₦{trialFee.toLocaleString("en-NG")}</h2>
+        <p className="text-xs text-muted">Trials are charged separately (see fee below) and never deducted from the service.</p>
         {trialRows.length === 0 && isOwner && st !== "draft" && <TrialBook quoteId={q.id} staff={staff.map((s) => ({ id: s.id, name: s.name }))} />}
         {trialRows.map((t) => (
           <div key={t.id} className="grid gap-2 border-t border-black/5 pt-2 text-sm">

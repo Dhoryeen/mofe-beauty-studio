@@ -20,7 +20,7 @@ function dayKey(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-export function BookFlow({ services, staff, initialServiceId }: { services: Service[]; staff: StaffMember[]; initialServiceId?: string }) {
+export function BookFlow({ services, staff, initialServiceId, cancellationTerms }: { services: Service[]; staff: StaffMember[]; initialServiceId?: string; cancellationTerms?: string }) {
   const router = useRouter();
   const [serviceId, setServiceId] = useState(
     services.some((s) => s.id === initialServiceId) ? (initialServiceId as string) : (services[0]?.id ?? "")
@@ -222,6 +222,7 @@ export function BookFlow({ services, staff, initialServiceId }: { services: Serv
           <Button variant={payMode === "full" ? "primary" : "secondary"} onClick={() => setPayMode("full")}>Pay full</Button>
         </div>
         {error && <p className="text-sm text-danger">{error}</p>}
+        {cancellationTerms && <p className="text-xs text-muted">Cancellation: {cancellationTerms}</p>}
         <div>
           <Button onClick={book} disabled={busy || service.consultRequired}>
             {busy ? "Booking…" : service.consultRequired ? "Consultation required first" : `Confirm booking — ${naira(dueNow)} (test mode)`}

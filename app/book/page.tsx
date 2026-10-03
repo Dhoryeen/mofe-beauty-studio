@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getSession } from "@/lib/session";
-import { services, staffProfiles, user } from "@/db/schema";
+import { services, settings, staffProfiles, user } from "@/db/schema";
 import { BookFlow } from "@/components/BookFlow";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +12,8 @@ export default async function BookPage({ searchParams }: { searchParams: { servi
   if (!session?.user) redirect("/sign-in");
 
   const svcRows = await db.select().from(services);
+  const settingRows = await db.select().from(settings);
+  const terms = settingRows.find((r) => r.key === "cancellation_terms")?.value ?? "";
   const profRows = await db
     .select({ id: user.id, name: staffProfiles.displayName, craft: staffProfiles.craft, bio: staffProfiles.bio })
     .from(staffProfiles)
@@ -24,7 +26,7 @@ export default async function BookPage({ searchParams }: { searchParams: { servi
         <h1 className="text-2xl font-semibold">Book a service</h1>
         <p className="text-sm text-muted">Instant booking for standard services — every slot is capacity-checked.</p>
       </div>
-      <BookFlow services={svcRows.filter((s) => s.active)} staff={profRows} initialServiceId={searchParams.serviceId} />
+      <BookFlow services={svcRows.filter((s) => s.active)} staff={profRows} initialServiceId={searchParams.serviceId} cancellationTerms={terms} />
     </div>
   );
 }

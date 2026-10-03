@@ -56,6 +56,19 @@ const SEED_SERVICES = [
     extras: ["Deep conditioning treatment"]
   },
   {
+    id: "svc-party",
+    name: "Party full look",
+    duration: "3 hrs · studio",
+    durationMin: 180,
+    description: "Makeup plus hairstyling for parties and events, two specialists.",
+    priceNaira: 85000,
+    priceType: "fixed",
+    category: "combined",
+    availableAt: "studio",
+    consultRequired: false,
+    extras: ["Touch-up kit"]
+  },
+  {
     id: "svc-bridal",
     name: "Bridal full look",
     duration: "3–4 hrs · studio or off-site",

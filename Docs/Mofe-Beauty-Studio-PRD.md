@@ -303,10 +303,8 @@ Requested Improvements:
 ## Current Progress & Roadmap
 
 Current Status:
-* Phase Reached: Phase 6 complete. Standard booking with capacity-checked slots and deposit/full payments, consultations with single-use credit, versioned quotes with paid trials, and studio-confirmation requests plus group coordination (with privacy) all run locally against PostgreSQL.
+* Phase Reached: Phase 8 complete — all launch scope built and verified locally: look-to-booking flows, consultations with single-use credit, versioned quotes with paid trials, studio-confirmation requests, group coordination with privacy, progress tracking, booking messages, reschedule/cancel/refund flows with manager approvals, completion with aftercare/reviews/final looks, beautician workspace with availability management, and manager dashboard with reports.
 * Integrations connected: Paystack (test mode proven end-to-end), Resend (transactional email delivering), Cloudflare R2 (uploads with public/private resolution).
-* Gallery ships with 8 illustrated sample looks (`public/samples/`) so clients can see the range before real studio photos replace them via the manager gallery admin.
+* Gallery ships with 8 illustrated sample looks (`public/samples/`) plus manager-uploaded studio photos; the seed backfills samples without touching studio content.
 
-Next Steps in Roadmap:
-1. Phase 7 — progress tracking, booking messages, reschedule/cancel/refund flows, completion with aftercare/reviews, and the 48h/24h reminder scheduler.
-2. Phase 8 — beautician workspace, manager dashboard with reports, and the full launch acceptance pass.
+Launch readiness (§7): each acceptance item has been exercised against the running app during its phase. Remaining before real clients: a verified studio domain for Resend, live Paystack keys with the hosted webhook URL, and management's final business settings (currency, fees, policies, travel area).
