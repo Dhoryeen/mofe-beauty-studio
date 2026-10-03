@@ -1,14 +1,6 @@
 # Netlify deployment for the Next.js app (App Router).
-# The Next.js Runtime is auto-detected; this pins the build and Node version.
+# Build settings only — keep this file minimal.
+# Set NODE_VERSION=20 in the Netlify UI (Site settings → Environment variables).
 [build]
   command = "npm run build"
   publish = ".next"
-
-[build.environment]
-  NODE_VERSION = "20"
-
-# Dynamic API routes and server components run as Functions (10s on the free tier).
-# Our Paystack/Resend calls complete well inside that; the verify flow (not the
-# webhook) remains the primary reconciliation path until a hosted domain exists.
-[functions]
-  timeout = 10
