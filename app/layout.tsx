@@ -23,7 +23,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <nav className="flex items-center gap-4 text-sm">
               <a href="/gallery">Gallery</a>
               <a href="/services">Services</a>
-              <a href="/demo">Demo</a>
               {session?.user && <a href="/book">Book</a>}
               {session?.user && <a href="/requests/new">Request date</a>}
               {session?.user && <a href="/bookings">My bookings</a>}
