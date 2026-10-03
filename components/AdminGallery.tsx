@@ -133,6 +133,7 @@ export function AdminGallery() {
         <label className="grid gap-1 text-sm font-medium">
           Photo (JPEG/PNG/WebP, max 5MB) — use only client photos you have consent to publish
           <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-sm" />
+          <span className="text-xs font-normal text-muted">Best: landscape 4:3 (e.g. 1200×900), subject centered, at least 800px wide. Portrait shots get center-cropped and may lose the top of the head.</span>
         </label>
         {error && <p className="text-sm text-danger">{error}</p>}
         <div>
