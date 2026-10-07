@@ -1,0 +1,38 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.mofebeauty.studio'
+    compileSdk 34
+
+    defaultConfig {
+        // WebView wrapper around the deployed Mofe Beauty Studio web app.
+        // TEST BUILD: debug-signed. Internet access is required at runtime
+        // because the booking backend, database and payments live server-side.
+        applicationId 'com.mofebeauty.studio'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    buildTypes {
+        debug {
+            // Debug builds are auto-signed with the local debug key.
+            // Labelled as a test build; not for store release.
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-test'
+        }
+        release {
+            // Release signing requires the studio keystore (not present on
+            // this machine). Kept minify-disabled so the wrapper stays simple.
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

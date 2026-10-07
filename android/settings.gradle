@@ -1,0 +1,18 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        // Google mirror of Maven Central: fallback when repo.maven.apache.org flakes.
+        maven { url = "https://maven-central.storage-download.googleapis.com/maven2/" }
+        mavenCentral()
+    }
+}
+rootProject.name = "Mofe Beauty Studio"
+include(":app")

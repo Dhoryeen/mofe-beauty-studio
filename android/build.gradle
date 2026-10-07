@@ -1,0 +1,6 @@
+// Top-level build file. The Android Gradle Plugin version is chosen for
+// JDK 17 + Gradle 8.10. No third-party app dependencies are used on purpose
+// so the release build only needs Google/Maven plugin artifacts.
+plugins {
+    id 'com.android.application' version '8.5.2' apply false
+}

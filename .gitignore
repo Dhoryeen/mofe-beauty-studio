@@ -9,3 +9,8 @@ out/
 .env.*.local
 /public/uploads/*
 !/public/uploads/.gitkeep
+# Android local build outputs and machine-specific SDK path
+android/local.properties
+android/.gradle/
+android/app/build/
+android/dist/

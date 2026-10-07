@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Framework Material theme in brand tones: cream background, ink text,
+         gold accent. No external dependencies required. -->
+    <style name="Theme.MofeBeauty" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#faf5ef</item>
+        <item name="android:colorBackground">#faf5ef</item>
+        <item name="android:textColorPrimary">#241a17</item>
+        <item name="android:textColorSecondary">#7a6a64</item>
+        <item name="android:colorAccent">#b07d3c</item>
+        <item name="android:statusBarColor">#faf5ef</item>
+        <item name="android:navigationBarColor">#faf5ef</item>
+    </style>
+</resources>
