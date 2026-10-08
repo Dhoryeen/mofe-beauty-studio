@@ -1,11 +1,21 @@
 import "./globals.css";
 import type { ReactNode } from "react";
+import type { Metadata, Viewport } from "next";
 import { getSession } from "@/lib/session";
 import { SignOutButton } from "@/components/SignOutButton";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Mofe Beauty Studio",
-  description: "Design a look, approve the plan, book and follow through."
+  description: "Design a look, approve the plan, book and follow through.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "Mofe Beauty", statusBarStyle: "default" },
+  icons: { apple: "/icons/apple-touch-icon.png" }
+};
+
+export const viewport: Viewport = {
+  themeColor: "#241a17",
+  viewportFit: "cover"
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
@@ -56,6 +66,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

@@ -4,3 +4,10 @@
 [build]
   command = "npm run build"
   publish = ".next"
+
+# The service worker must always revalidate: a cached sw.js would pin
+# clients to stale offline behaviour.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
